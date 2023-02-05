@@ -29,6 +29,23 @@ function App() {
   });
 
   //принимает целевую функцию и возвращает функцию, которая передает время и адрес цели
+  const display = (target: any) => (time: any) => target(time);
+
+  //принимает шаблонную строку и спользует ее для возврата показания часов, отформатированого по критериям, заданным
+  //строкой. То есть эта функция заменяет заполнители показаниями часов, минут, секунд, и аремени суток
+  const formatClock = (format: string) => (time: any) =>
+    format
+      .replace("hh", time.hours)
+      .replace("mm", time.minutes)
+      .replace("ss", time.seconds)
+      .replace("tt", time.ampm);
+
+  //принимает ключ обьекта в качестве фргумента и добавляет ноль перед значением, хранящемся под ключом этого обьекта.
+  // Функция получает ключ к указанному полю и добавляет перед значениями ноль, если они меньше 10
+  const pretendZero = (key: any) => (clockTime: any) => ({
+    ...clockTime,
+    key: clockTime[key] < 10 ? "0" + clockTime[key] : clockTime[key],
+  });
 
   return <div className="App"></div>;
 }
