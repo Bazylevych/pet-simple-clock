@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const compose =
+    (...fnc: any) =>
+    (arg: any) =>
+      fnc.reduce((composed: any, f: any) => f(composed), arg);
+
+  const oneSecond = () => 1000;
+  const getCurrentTime = () => new Date();
+  const clear = () => console.clear();
+  const log = (message: string) => console.log(message);
+
+  // принимает обьект времени и возвращает обьект, который содержит часы, минуты и секунды
+  const serializeClockTime = (date: Date) => ({
+    hours: date.getHours(),
+    minutes: date.getMinutes(),
+    seconds: date.getSeconds(),
+  });
+
+  //принимает обьект показания часов и возвращает обьект, в котором показание преобразуется в формат граждансокого времени
+  const civilianHours = (clockTime: any) => ({
+    ...clockTime,
+    hours: clockTime.hours > 12 ? clockTime.hours - 12 : clockTime.hours,
+  });
+
+  //принимает обьект поепзпния часов и добавляет к нему время суток(АМ или РМ)
+  const appendAMPM = (clockTime: any) => ({
+    ...clockTime,
+    ampm: clockTime.hours >= 12 ? "PM" : "AM",
+  });
+
+  //принимает целевую функцию и возвращает функцию, которая передает время и адрес цели
+
+  return <div className="App"></div>;
 }
 
 export default App;
