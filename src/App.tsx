@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 function App() {
   const compose =
     (...fnc: any) =>
@@ -46,6 +48,38 @@ function App() {
     ...clockTime,
     key: clockTime[key] < 10 ? "0" + clockTime[key] : clockTime[key],
   });
+
+  // принимает показания часов в качестве аргумента и преобразует из в формат граждансокго времени, используя обе его формы
+  const convertToCivilianTime = (clockTime: any) =>
+    compose(appendAMPM, civilianHours)(clockTime);
+
+  // принимает показания часов в формате гражданского фремени и обеспечивает рендеринг двухзначных цифр в часах, минутах и секундах, добаляя нули
+  const doubleDigits = (civilianTime: any) =>
+    compose(
+      pretendZero("hours"),
+      pretendZero("minutes"),
+      pretendZero("seconds")
+    )(civilianTime);
+
+  // запускает часы, вызывая функуии обратного вызова с интервалом в одну секунду. Обратный вызов состоит из всех пересичленных функций.
+  // Каждую секунду консоль очищается, происходит получение текущего времени, его преобразование в формат гражданского времени, форматирование и рендеринг currentTime
+  const startTicking = () =>
+    setInterval(
+      compose(
+        clear,
+        getCurrentTime,
+        serializeClockTime,
+        convertToCivilianTime,
+        doubleDigits,
+        formatClock("hh:mm:ss:tt"),
+        display(log)
+      ),
+      oneSecond()
+    );
+
+  useEffect(() => {
+    startTicking();
+  }, []);
 
   return <div className="App"></div>;
 }
