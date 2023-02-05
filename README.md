@@ -1,46 +1,87 @@
-# Getting Started with Create React App
+const compose =
+(...fnc: any) =>
+(arg: any) =>
+fnc.reduce((composed: any, f: any) => f(composed), arg);
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+const oneSecond = () => 1000;
+const getCurrentTime = () => new Date();
+const clear = () => console.clear();
+const log = (message: string) => console.log(message);
 
-## Available Scripts
+### // принимает обьект времени и возвращает обьект, который содержит часы, минуты и секунды
 
-In the project directory, you can run:
+const serializeClockTime = (date: Date) => ({
+hours: date.getHours(),
+minutes: date.getMinutes(),
+seconds: date.getSeconds(),
+});
 
-### `yarn start`
+### //принимает обьект показания часов и возвращает обьект, в котором показание преобразуется в формат граждансокого времени
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+const civilianHours = (clockTime: any) => ({
+...clockTime,
+hours: clockTime.hours > 12 ? clockTime.hours - 12 : clockTime.hours,
+});
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### //принимает обьект поепзпния часов и добавляет к нему время суток(АМ или РМ)
 
-### `yarn test`
+const appendAMPM = (clockTime: any) => ({
+...clockTime,
+ampm: clockTime.hours >= 12 ? "PM" : "AM",
+});
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### //принимает целевую функцию и возвращает функцию, которая передает время и адрес цели
 
-### `yarn build`
+const display = (target: any) => (time: any) => target(time);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### //принимает шаблонную строку и спользует ее для возврата показания часов, отформатированого по критериям, заданным
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### //строкой. То есть эта функция заменяет заполнители показаниями часов, минут, секунд, и аремени суток
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const formatClock = (format: string) => (time: any) =>
+format
+.replace("hh", time.hours)
+.replace("mm", time.minutes)
+.replace("ss", time.seconds)
+.replace("tt", time.ampm);
 
-### `yarn eject`
+### //принимает ключ обьекта в качестве фргумента и добавляет ноль перед значением, хранящемся под ключом этого обьекта.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### // Функция получает ключ к указанному полю и добавляет перед значениями ноль, если они меньше 10
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const pretendZero = (key: any) => (clockTime: any) => ({
+...clockTime,
+key: clockTime[key] < 10 ? "0" + clockTime[key] : clockTime[key],
+});
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### // принимает показания часов в качестве аргумента и преобразует из в формат граждансокго времени, используя обе его формы
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+const convertToCivilianTime = (clockTime: any) =>
+compose(appendAMPM, civilianHours)(clockTime);
 
-## Learn More
+### // принимает показания часов в формате гражданского фремени и обеспечивает рендеринг двухзначных цифр в часах, минутах и секундах, добаляя нули
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const doubleDigits = (civilianTime: any) =>
+compose(
+pretendZero("hours"),
+pretendZero("minutes"),
+pretendZero("seconds")
+)(civilianTime);
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### // запускает часы, вызывая функуии обратного вызова с интервалом в одну секунду. Обратный вызов состоит из всех пересичленных функций.
+
+### // Каждую секунду консоль очищается, происходит получение текущего времени, его преобразование в формат гражданского времени, форматирование и рендеринг currentTime
+
+const startTicking = () =>
+setInterval(
+compose(
+clear,
+getCurrentTime,
+serializeClockTime,
+convertToCivilianTime,
+doubleDigits,
+formatClock("hh:mm:ss:tt"),
+display(log)
+),
+oneSecond()
+);

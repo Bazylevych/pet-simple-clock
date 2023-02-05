@@ -1,0 +1,51 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  position: fixed;
+  .clock-layout {
+    background-color: rgb(125, 157, 175);
+    width: 900px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+
+    .title {
+      width: 100%;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .title-text {
+        font-size: 50px;
+      }
+    }
+    .date {
+      width: 100%;
+      height: 350px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .date-text {
+        font-size: 90px;
+      }
+    }
+
+    .time {
+      width: 100%;
+      height: 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgb(103, 130, 145);
+      .time-text {
+        font-size: 70px;
+      }
+    }
+  }
+}
